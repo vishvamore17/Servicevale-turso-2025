@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { db } from '../db/index';
 import { photoTable } from '../db/schema';
-import { nanoid } from 'nanoid';
+import { v4 as uuidv4 } from 'uuid';
 import { eq, desc } from 'drizzle-orm';
 import multer from 'multer';
 import path from 'path';
@@ -59,7 +59,7 @@ export const createPhoto = async (req: Request, res: Response) => {
     const files = req.files as { [fieldname: string]: Express.Multer.File[] };
     const data = req.body;
     
-    const id = nanoid();
+    const id = uuidv4();
     
     if ((!files || !files.beforeImage) && !data.beforeImageUrl) {
       return res.status(400).json({

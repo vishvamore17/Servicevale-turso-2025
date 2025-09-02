@@ -1,13 +1,13 @@
 import {Request, Response} from 'express';
 import {db} from '../db/index';
 import {paymentTable} from '../db/schema';
-import {nanoid} from 'nanoid';
+import { v4 as uuidv4 } from 'uuid';
 import { eq, desc, and, gte, or, inArray } from 'drizzle-orm';
 
 export const createPayment = async (req: Request, res: Response) => {
     try {
         const data = req.body;
-        const id = nanoid();
+        const id = uuidv4();
         await db.insert(paymentTable).values({id, ...data});
         res.json({success: true, message: 'Payment created successfully', id});
     } catch (error) {

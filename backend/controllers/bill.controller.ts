@@ -1,13 +1,13 @@
 import {Request, Response} from 'express';
 import {db} from '../db/index';
 import {billTable} from '../db/schema';
-import {nanoid} from 'nanoid';
+import { v4 as uuidv4 } from 'uuid';
 import { eq, desc } from 'drizzle-orm';
 
 export const createBill = async (req: Request, res: Response) => {
     try {
         const data = req.body;
-        const id = nanoid();
+        const id = uuidv4();
         
         if (!data.engineerCommission && data.serviceCharge) {
             data.engineerCommission = Math.round(parseFloat(data.serviceCharge) * 0.25);

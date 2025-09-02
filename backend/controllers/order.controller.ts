@@ -1,13 +1,13 @@
 import {Request, Response} from 'express';
 import { db } from '../db/index';
 import { orderTable } from '../db/schema';
-import { nanoid } from 'nanoid';
+import { v4 as uuidv4 } from 'uuid';
 import { eq, desc, count, and } from 'drizzle-orm';
 
 export const createOrder = async (req: Request, res: Response) => {
     try {
         const data = req.body;
-        const id = nanoid();
+        const id = uuidv4();
         await db.insert(orderTable).values({id, ...data}).onConflictDoNothing();  
         res.json({success: true, message: 'Order created successfully', id});
     } catch (error) {

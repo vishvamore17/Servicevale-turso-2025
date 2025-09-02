@@ -1,13 +1,14 @@
 import {Request, Response} from 'express';
 import {db} from '../db/index';
 import {engineerTable} from '../db/schema';
-import {nanoid} from 'nanoid';
+import { v4 as uuidv4 } from 'uuid';
 import { eq, desc } from 'drizzle-orm';
 
 export const createEngineer = async (req: Request, res: Response) => {
     try {
-        const data = req.body;
-        const id = nanoid();
+        const data = req.body
+        
+        const id = uuidv4();
         await db.insert(engineerTable).values({id,...data}).onConflictDoNothing();  
         res.json({sucess: true, message: 'Engineer created successfully', id});
     } catch (error) {
