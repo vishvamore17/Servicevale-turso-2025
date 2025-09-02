@@ -2,7 +2,7 @@
   "name": "backend",
   "version": "1.0.0",
   "main": "dist/server.js",
- "scripts": {
+  "scripts": {
     "dev": "nodemon server.ts",
     "build": "tsc",
     "start": "node dist/server.js"
@@ -15,6 +15,7 @@
     "cloudinary": "^2.7.0",
     "cors": "^2.8.5",
     "date-fns": "^3.6.0",
+    "dotenv": "^17.2.1",
     "drizzle-orm": "^0.44.4",
     "express": "^5.1.0",
     "multer": "^2.0.2",
