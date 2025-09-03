@@ -64,7 +64,7 @@
       "typedRoutes": true
     },
     "extra": {
-      "apiUrl": "https://servicevale-turso-2025.onrender.com",
+      "apiUrl": "https://servicevale-turso.onrender.com",
       "router": {},
       "eas": {
       }
