@@ -64,10 +64,11 @@
       "typedRoutes": true
     },
     "extra": {
-      "apiUrl": "http://192.168.1.4:3000",
+      "apiUrl": "https://servicevale-j976.onrender.com",
       "router": {},
       "eas": {
       }
     }
   }
 }
+

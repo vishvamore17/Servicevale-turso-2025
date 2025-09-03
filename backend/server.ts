@@ -12,8 +12,15 @@ import authRoutes from './routes/auth.routes';
 import photoRoute from  './routes/photo.routes';
 import path from 'path';
 import engineerSummaryRoutes from './routes/engineerSummary.routes';
+import fs from 'fs' 
 
 const app = express();
+// Ensure uploads directory exists on server start
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+  console.log('Created uploads directory:', uploadsDir);
+}
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use(cors());

@@ -6,6 +6,7 @@ import fs from 'fs';
 
 const storage = multer.diskStorage({
   destination: (req: Request, file: Express.Multer.File, cb) => {
+    // Uploads is now inside backend folder
     const uploadsDir = path.join(__dirname, '..', 'uploads');
     
     if (!fs.existsSync(uploadsDir)) {
