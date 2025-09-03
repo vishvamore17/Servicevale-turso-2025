@@ -87,21 +87,22 @@ const PhotoComparisonPage = () => {
     };
 
     const getCompleteImageUrl = (urlPath: string | undefined): string | null => {
-        if (!urlPath) return null;
+  if (!urlPath) return null;
 
-        // If it's already a full URL (http or https), return as-is
-        if (urlPath.startsWith('http')) {
-            return urlPath;
-        }
+  // If it's already a full URL (http or https), return as-is
+  if (urlPath.startsWith('http')) {
+    return urlPath;
+  }
 
-        // If it starts with /uploads (like your example), prepend API_BASE_URL
-        if (urlPath.startsWith('/uploads/')) {
-            return `${API_BASE_URL}${urlPath}`;
-        }
+  // If it starts with /uploads, prepend API_BASE_URL
+  if (urlPath.startsWith('/uploads/')) {
+    return `${API_BASE_URL}${urlPath}`;
+  }
 
-        // If it's just a filename without path, construct the full path
-        return `${API_BASE_URL}/uploads/${urlPath}`;
-    };
+  // If it's just a filename, construct the full path
+  return `${API_BASE_URL}/uploads/${urlPath}`;
+};
+
     useEffect(() => {
         if (userEmail) {
             fetchPhotoSets();

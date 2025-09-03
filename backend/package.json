@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "nodemon server.ts",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "postinstall": "mkdir -p ../uploads || true"
+
   },
   "author": "",
   "license": "ISC",

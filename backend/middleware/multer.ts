@@ -6,8 +6,9 @@ import fs from 'fs';
 
 const storage = multer.diskStorage({
   destination: (req: Request, file: Express.Multer.File, cb) => {
-    // Uploads is now inside backend folder
-    const uploadsDir = path.join(__dirname, '..', 'uploads');
+    // FIX: Go two levels up to reach the uploads folder outside backend
+    const uploadsDir = path.join(__dirname, '..', '..', 'uploads');
+    console.log('Saving files to:', uploadsDir);
     
     if (!fs.existsSync(uploadsDir)) {
       fs.mkdirSync(uploadsDir, { recursive: true });
