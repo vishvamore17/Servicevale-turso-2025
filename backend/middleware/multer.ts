@@ -6,26 +6,16 @@ import fs from 'fs';
 
 const storage = multer.diskStorage({
   destination: (req: Request, file: Express.Multer.File, cb) => {
-    // Go two levels up from current file location to reach project root
-    const uploadsDir = path.resolve(__dirname, '..', '..', 'uploads');
-    console.log('Multer destination path:', uploadsDir);
+    const uploadsDir = path.join(__dirname, '..', 'uploads');
     
-    try {
-      if (!fs.existsSync(uploadsDir)) {
-        console.log('Creating uploads directory from multer...');
-        fs.mkdirSync(uploadsDir, { recursive: true });
-        console.log('Uploads directory created by multer');
-      }
-      
-      cb(null, uploadsDir);
-    } catch (error) {
-      console.error('Error creating uploads directory in multer:', error);
-      cb(error as Error, '');
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
     }
+    
+    cb(null, uploadsDir);
   },
   filename: (req: Request, file: Express.Multer.File, cb) => {
     const uniqueName = `${uuidv4()}${path.extname(file.originalname)}`;
-    console.log('Saving file as:', uniqueName);
     cb(null, uniqueName);
   }
 });

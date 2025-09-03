@@ -10,7 +10,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
 
 const API_BASE_URL = `${Constants.expoConfig?.extra?.apiUrl}`;
-console.log('API Base URL:', API_BASE_URL);
 
 type ImagePickerResult = {
     uri: string;
@@ -42,7 +41,7 @@ const PhotoComparisonPage = () => {
     const [refreshing, setRefreshing] = useState(false);
     const [editingPhotoSetId, setEditingPhotoSetId] = useState<string | null>(
         Array.isArray(existingPhotoSetId) ? existingPhotoSetId[0] : existingPhotoSetId || null
-    );
+    );    
     const [serviceDetails, setServiceDetails] = useState<any>(null);
     const [userEmail, setUserEmail] = useState<string>('');
     const [userName, setUserName] = useState<string>('');
@@ -68,13 +67,13 @@ const PhotoComparisonPage = () => {
         };
 
         getUserEmail();
-
+        
         if (serviceId) {
             fetchServiceDetails(Array.isArray(serviceId) ? serviceId[0] : serviceId);
         }
     }, [serviceId]);
 
-    const fetchServiceDetails = async (id: string) => {
+     const fetchServiceDetails = async (id: string) => {
         try {
             const response = await fetch(`${API_BASE_URL}/services/${id}`);
             if (response.ok) {
@@ -85,23 +84,6 @@ const PhotoComparisonPage = () => {
             console.error('Error fetching service details:', error);
         }
     };
-
-    const getCompleteImageUrl = (urlPath: string | undefined): string | null => {
-  if (!urlPath) return null;
-
-  // If it's already a full URL (http or https), return as-is
-  if (urlPath.startsWith('http')) {
-    return urlPath;
-  }
-
-  // If it starts with /uploads, prepend API_BASE_URL
-  if (urlPath.startsWith('/uploads/')) {
-    return `${API_BASE_URL}${urlPath}`;
-  }
-
-  // If it's just a filename, construct the full path
-  return `${API_BASE_URL}/uploads/${urlPath}`;
-};
 
     useEffect(() => {
         if (userEmail) {
@@ -120,18 +102,18 @@ const PhotoComparisonPage = () => {
                 setNotes(photoSet.notes || '');
 
                 if (photoSet.beforeImageUrl) {
-  setBeforeImage({
-    uri: getCompleteImageUrl(photoSet.beforeImageUrl) || '',
-    fileName: 'existing_before.jpg'
-  });
-}
+                    setBeforeImage({
+                        uri: `${API_BASE_URL}${photoSet.beforeImageUrl}`,
+                        fileName: 'existing_before.jpg'
+                    });
+                }
 
-if (photoSet.afterImageUrl) {
-  setAfterImage({
-    uri: getCompleteImageUrl(photoSet.afterImageUrl) || '',
-    fileName: 'existing_after.jpg'
-  });
-}
+                if (photoSet.afterImageUrl) {
+                    setAfterImage({
+                        uri: `${API_BASE_URL}${photoSet.afterImageUrl}`,
+                        fileName: 'existing_after.jpg'
+                    });
+                }
             }
         } catch (error) {
             console.error('Error loading existing photo set:', error);
@@ -173,74 +155,74 @@ if (photoSet.afterImageUrl) {
         };
     }, []);
 
-    const takePhoto = async (setImage: (image: ImagePickerResult | null) => void, imageType: 'before' | 'after') => {
-        try {
-            if (editingPhotoSetId && imageType === 'before') {
-                Alert.alert('Cannot Change', 'Before image cannot be changed once uploaded.');
-                return;
-            }
-            if (imageType === 'after' && !editingPhotoSetId) {
-                Alert.alert(
-                    'Edit Mode Required',
-                    'Please click the "Edit" button on an existing photo set to add an after image.',
-                    [
-                        { text: 'OK', style: 'default' }
-                    ]
-                );
-                return;
-            }
-
-            const cameraPermission = await ImagePicker.requestCameraPermissionsAsync();
-            if (!cameraPermission.granted) {
-                Alert.alert('Permission Denied', 'Camera access is required');
-                return;
-            }
-
-            const result = await ImagePicker.launchCameraAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                quality: 0.8,
-                allowsEditing: false,
-                aspect: [4, 3],
-            });
-
-            if (!result.canceled && result.assets.length > 0) {
-                const asset = result.assets[0];
-                const imageResult: ImagePickerResult = {
-                    uri: asset.uri,
-                    fileName: asset.fileName || `photo_${Date.now()}.jpg`,
-                    fileSize: asset.fileSize || 0,
-                    type: asset.type || 'image/jpeg',
-                };
-                setImage(imageResult);
-
-                setButtonsEnabled(false);
-                setTimeRemaining(3);
-
-                if (buttonTimerRef.current) {
-                    clearTimeout(buttonTimerRef.current);
-                }
-
-                const countdownInterval = setInterval(() => {
-                    setTimeRemaining(prev => {
-                        if (prev <= 1) {
-                            clearInterval(countdownInterval);
-                            return 0;
-                        }
-                        return prev - 1;
-                    });
-                }, 1000);
-
-                buttonTimerRef.current = setTimeout(() => {
-                    setButtonsEnabled(true);
-                    setTimeRemaining(0);
-                    clearInterval(countdownInterval);
-                }, 3000);
-            }
-        } catch (error) {
-            console.error('Error taking photo:', error);
-            Alert.alert('Error', 'Failed to take photo');
+   const takePhoto = async (setImage: (image: ImagePickerResult | null) => void, imageType: 'before' | 'after') => {
+    try {
+        if (editingPhotoSetId && imageType === 'before') {
+            Alert.alert('Cannot Change', 'Before image cannot be changed once uploaded.');
+            return;
         }
-    };
+        if (imageType === 'after' && !editingPhotoSetId) {
+            Alert.alert(
+                'Edit Mode Required',
+                'Please click the "Edit" button on an existing photo set to add an after image.',
+                [
+                    { text: 'OK', style: 'default' }
+                ]
+            );
+            return;
+        }
+
+        const cameraPermission = await ImagePicker.requestCameraPermissionsAsync();
+        if (!cameraPermission.granted) {
+            Alert.alert('Permission Denied', 'Camera access is required');
+            return;
+        }
+
+        const result = await ImagePicker.launchCameraAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            quality: 0.8,
+            allowsEditing: false,
+            aspect: [4, 3],
+        });
+
+        if (!result.canceled && result.assets.length > 0) {
+            const asset = result.assets[0];
+            const imageResult: ImagePickerResult = {
+                uri: asset.uri,
+                fileName: asset.fileName || `photo_${Date.now()}.jpg`,
+                fileSize: asset.fileSize || 0,
+                type: asset.type || 'image/jpeg',
+            };
+            setImage(imageResult);
+
+            setButtonsEnabled(false);
+            setTimeRemaining(3);
+
+            if (buttonTimerRef.current) {
+                clearTimeout(buttonTimerRef.current);
+            }
+
+            const countdownInterval = setInterval(() => {
+                setTimeRemaining(prev => {
+                    if (prev <= 1) {
+                        clearInterval(countdownInterval);
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+
+            buttonTimerRef.current = setTimeout(() => {
+                setButtonsEnabled(true);
+                setTimeRemaining(0);
+                clearInterval(countdownInterval);
+            }, 3000);
+        }
+    } catch (error) {
+        console.error('Error taking photo:', error);
+        Alert.alert('Error', 'Failed to take photo');
+    }
+};
 
 
     const handleClearImage = (setImage: (image: ImagePickerResult | null) => void) => {
@@ -254,7 +236,7 @@ if (photoSet.afterImageUrl) {
     const createNotification = async (description: string, userEmail: string) => {
         try {
             let fullDescription = description;
-
+            
             if (serviceDetails) {
                 fullDescription += `\nCustomer: ${serviceDetails.customerName || 'N/A'}`;
                 fullDescription += `\nService: ${serviceDetails.serviceType || 'N/A'}`;
@@ -315,7 +297,7 @@ if (photoSet.afterImageUrl) {
                         uri: image.uri,
                         name: filename,
                         type: 'image/jpeg',
-                    } as any;
+                    } as any; 
 
                     formData.append(fieldName, file);
                 } catch (error) {
@@ -369,18 +351,18 @@ if (photoSet.afterImageUrl) {
             const result = await response.json();
             console.log('Server response:', result);
 
-            if (result.success) {
-                try {
-                    let notificationDescription;
-                    if (method === 'POST') {
-                        notificationDescription = `Before image uploaded by ${userName} with notes: ${notes || 'No notes provided'}`;
-                    } else {
-                        notificationDescription = `After image uploaded by ${userName} with notes: ${notes || 'No notes provided'}`;
-                    }
-                    await createNotification(notificationDescription, userEmail);
-                } catch (notificationError) {
-                    console.warn('Notification failed (photo still uploaded):', notificationError);
+        if (result.success) {
+            try {
+                let notificationDescription;
+                if (method === 'POST') {
+                    notificationDescription = `Before image uploaded by ${userName} with notes: ${notes || 'No notes provided'}`;
+                } else {
+                    notificationDescription = `After image uploaded by ${userName} with notes: ${notes || 'No notes provided'}`;
                 }
+                await createNotification(notificationDescription, userEmail);
+            } catch (notificationError) {
+                console.warn('Notification failed (photo still uploaded):', notificationError);
+            }
                 Alert.alert('Success', editingPhotoSetId ? 'Photo updated successfully!' : 'Photo saved successfully!');
                 setBeforeImage(null);
                 setAfterImage(null);
@@ -417,12 +399,10 @@ if (photoSet.afterImageUrl) {
         }
     };
 
-  const openPreview = (imageUrl: string) => {
-  const fullUrl = getCompleteImageUrl(imageUrl);
-  console.log('Opening preview for:', fullUrl);
-  setPreviewImageUrl(fullUrl);
-  setPreviewVisible(true);
-};
+    const openPreview = (imageUrl: string) => {
+        setPreviewImageUrl(imageUrl);
+        setPreviewVisible(true);
+    };
 
     const closePreview = () => {
         setPreviewVisible(false);
@@ -605,11 +585,11 @@ if (photoSet.afterImageUrl) {
                             )}
                         </View>
                     ) : (
-                        <Text style={styles.instructionText}>
-                            {editingPhotoSetId
-                                ? 'Take after photo or update notes'
-                                : 'Take before photo first, then edit later to add after photo'}
-                        </Text>
+                       <Text style={styles.instructionText}>
+    {editingPhotoSetId 
+        ? 'Take after photo or update notes' 
+        : 'Take before photo first, then edit later to add after photo'}
+</Text>
                     )}
                 </View>
 
@@ -683,13 +663,12 @@ if (photoSet.afterImageUrl) {
                                             <Text style={styles.photoLabel}>Before</Text>
                                             {item.beforeImageUrl ? (
                                                 <TouchableOpacity
-                                                    onPress={() => openPreview(getCompleteImageUrl(item.beforeImageUrl) || '')}
+                                                    onPress={() => openPreview(`${API_BASE_URL}${item.beforeImageUrl}`)}
                                                     activeOpacity={0.8}
                                                 >
                                                     <Image
-                                                        source={{ uri: getCompleteImageUrl(item.beforeImageUrl) || '' }}
+                                                        source={{ uri: `${API_BASE_URL}${item.beforeImageUrl}` }}
                                                         style={styles.photoImage}
-                                                        onError={(e) => console.log('Image load error:', e.nativeEvent.error)}
                                                     />
                                                 </TouchableOpacity>
                                             ) : (
